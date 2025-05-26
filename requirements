@@ -6,4 +6,4 @@ seaborn
 xgboost
 lightgbm
 catboost
-
+pyarrow
