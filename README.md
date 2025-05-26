@@ -38,6 +38,8 @@ pip install -r requirements.txt
 
 ### 2. Run the model
 
+>  Make sure the file `MLA_100k_checked_v3.jsonlines` is located in the `data/` folder at the root of the project.
+
 ```bash
 python src/new_or_used.py
 ```

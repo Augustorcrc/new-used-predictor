@@ -37,7 +37,10 @@ import os
 # You can safely assume that `build_dataset` is correctly implemented
 def build_dataset():
     # data = [json.loads(x) for x in open("../data/MLA_100k_checked_v3.jsonlines")]
-    data = [json.loads(x) for x in open(DATA_PATH, encoding="utf-8")]
+    try:  
+        data = [json.loads(x) for x in open(DATA_PATH, encoding="utf-8")]
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Dataset no encontrado en {DATA_PATH}. Revisa la ruta del archivo.")
     target = lambda x: x.get("condition")
     N = -10000
     X_train = data[:N]

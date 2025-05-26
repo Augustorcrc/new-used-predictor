@@ -38,6 +38,8 @@ pip install -r requirements.txt
 
 ### 2. Ejecutar el modelo
 
+>  Asegurate de que el archivo `MLA_100k_checked_v3.jsonlines` esté ubicado en la carpeta `data/` en la raíz del proyecto.
+
 ```bash
 python src/new_or_used.py
 ```
