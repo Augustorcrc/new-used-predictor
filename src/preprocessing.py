@@ -107,14 +107,28 @@ def preprocess(data) -> pd.DataFrame:
     return df
 
 
+
+
 if __name__ == "__main__":
 
+    # configuración de directorios y rutas
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    print(f"Directorio base: {BASE_DIR}")
+
+    DATA_PATH = os.path.join(BASE_DIR, "..", "data", "MLA_100k_checked_v3.jsonlines")
+    print(f"Ruta del dataset: {DATA_PATH}")
+    
+    OUTPUT_DIR = os.path.join(BASE_DIR, "..", "data")
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    output_path = os.path.join(OUTPUT_DIR, "preprocessed_data.parquet")
+    print(f"Ruta de salida del dataset preprocesado: {output_path}")
+
     # Cargar el dataset
-    path = "../data/MLA_100k_checked_v3.jsonlines"
-    data = [json.loads(x) for x in open(path)]
+    data = [json.loads(x) for x in open(DATA_PATH)]
     
     # Preprocesar el dataset
     df = preprocess(data)
 
     # Guardar el DataFrame preprocesado en un archivo parquet
-    df.to_parquet('../data/preprocessed_data.parquet', index=False)
+    df.to_parquet(output_path, index=False)

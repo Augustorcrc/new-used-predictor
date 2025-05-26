@@ -30,12 +30,14 @@ from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 import pandas as pd
 import logging
+import os
 
 
 
 # You can safely assume that `build_dataset` is correctly implemented
 def build_dataset():
-    data = [json.loads(x) for x in open("../data/MLA_100k_checked_v3.jsonlines")]
+    # data = [json.loads(x) for x in open("../data/MLA_100k_checked_v3.jsonlines")]
+    data = [json.loads(x) for x in open(DATA_PATH, encoding="utf-8")]
     target = lambda x: x.get("condition")
     N = -10000
     X_train = data[:N]
@@ -127,7 +129,9 @@ def funcion_principal(X_train, y_train, X_test, y_test):
     }
 
     metrics_df = pd.DataFrame([metrics])
-    metrics_df.to_csv("../output/metricas_modelo.csv", index=False)
+
+    metrics_path = os.path.join(OUTPUT_DIR, "metricas_modelo.csv")
+    metrics_df.to_csv(metrics_path, index=False)
 
     logger.info(" Archivo 'metricas_modelo.csv' guardado.")
     
@@ -142,7 +146,8 @@ def funcion_principal(X_train, y_train, X_test, y_test):
         item['real_condition'] = label_map[int(y_test[i])]
 
     # Guardar como .jsonlines
-    with open("../output/X_test_with_predictions.jsonlines", "w", encoding="utf-8") as f:
+    jsonlines_path = os.path.join(OUTPUT_DIR, "X_test_with_predictions.jsonlines")
+    with open(jsonlines_path, "w", encoding="utf-8") as f:
         for item in X_test:
             f.write(json.dumps(item) + "\n")
 
@@ -161,6 +166,16 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+# configuración de directorios y rutas
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+print(f"Directorio base: {BASE_DIR}")
+
+DATA_PATH = os.path.join(BASE_DIR, "..", "data", "MLA_100k_checked_v3.jsonlines")
+print(f"Ruta del dataset: {DATA_PATH}")
+
+OUTPUT_DIR = os.path.join(BASE_DIR, "..", "output")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
  
 
 if __name__ == "__main__":

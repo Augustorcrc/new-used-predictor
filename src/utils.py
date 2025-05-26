@@ -101,7 +101,7 @@ def tune_model(model_name, X_train, y_train, params=None, n_iter=30, cv=5):
     )
 
     search.fit(X_train, y_train)
-    print(f"\n✅ Mejor score ({model_name}): {search.best_score_:.4f}")
+    print(f"\n Mejor score ({model_name}): {search.best_score_:.4f}")
     print(f"📌 Mejores parámetros: {search.best_params_}")
     
     return search.best_estimator_
