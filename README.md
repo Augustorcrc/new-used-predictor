@@ -1,5 +1,5 @@
 
-# 🛍️ Clasificador de Productos: ¿Nuevo o Usado?
+#  Clasificador de Productos: ¿Nuevo o Usado?
 
 Este proyecto construye un modelo de machine learning para predecir si una publicación en el Marketplace de Mercado Libre corresponde a un producto **nuevo** o **usado**, utilizando información estructurada provista por la plataforma.
 
@@ -52,8 +52,8 @@ Esto entrenará el modelo, evaluará su rendimiento y generará dos archivos en 
 
 ##  Decisiones de diseño
 
-- **Target**: Se codificó como `1 = new`, `0 = used`.
-- **Preprocesamiento**: Se eliminan columnas con más del 80% de valores nulos, con mayoria de valores string vacios o listas vacias, irrelevantes y colineales.
+**Target**: Se codificó como `1 = new`, `0 = used`.
+**Preprocesamiento**: Se eliminan columnas con más del 80% de valores nulos, con mayoria de valores string vacios o listas vacias, irrelevantes y colineales.
 
 Se extraen features como:
   - `pictures_count`: cantidad de imágenes en la publicación. 
@@ -68,11 +68,11 @@ Se codifican binarias utiles como:
   - `has_original_price`: indica si se informó un precio original (pocos no nulos, pero relevante).
 
 
-- **Encoding**: Se codifican columnas categóricas de baja cardinalidad con `LabelEncoder`, estas se identifican con el sufijo `_enc`. Las booleanas se convierten a `int`.
-- **Selección de variables**: Se seleccionan las features numéricas más correlacionadas con el target (`condition_enc`).
-- **Escalado**: `MinMaxScaler` aplicado sólo a las features seleccionadas.
-- **Modelo**: Se usó `XGBoostClassifier` con hiperparámetros ajustados vía `RandomizedSearchCV`.
-- **Exportación**: El conjunto `X_test` se guarda con columnas `predicted_condition` y `real_condition` en formato `.jsonlines`.
+**Encoding**: Se codifican columnas categóricas de baja cardinalidad con `LabelEncoder`, estas se identifican con el sufijo `_enc`. Las booleanas se convierten a `int`.
+**Selección de variables**: Se seleccionan las features numéricas más correlacionadas con el target (`condition_enc`) o resultantes de experimentacion con diversos subconjuntos de columnas.
+**Escalado**: `MinMaxScaler` aplicado sólo a las features seleccionadas.
+**Modelo**: Se usó `XGBoostClassifier` con hiperparámetros ajustados vía `RandomizedSearchCV`.
+**Exportación**: El conjunto `X_test` se guarda con columnas `predicted_condition` y `real_condition` en formato `.jsonlines`.
 
 ---
 
