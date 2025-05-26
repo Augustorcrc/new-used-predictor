@@ -44,18 +44,18 @@ def preprocess(data) -> pd.DataFrame:
         'shipping_dimensions',       # < 10% no nulos
         'official_store_id',         # < 10% de valores NO nulos
         'differential_pricing',      # < 10% de valores NO nulos
-        'original_price',            # < 10% de valores NO nulos
         'video_id',                  # < 10% de valores NO nulos
         'catalog_product_id',        # < 10% de valores NO nulos
         'subtitle',                  # < 10% de valores NO nulos
         'variations',                # contiene como valor listas de diccionarios. A priori no contiene informacion "relevante"
         'attributes',                # contiene como valor listas de diccionarios. A priori no contiene informacion "relevante"
-        'descriptions',   # pocos nulos pero en primera iteración no se usa
-        'parent_item_id',  # pocos nulos pero en primera iteración no se usa
-        'tags',
-        'site_id',  # todas las filas tienen el mismo valor
+        'descriptions',              # pocos nulos pero en primera iteración no se usa
+        'parent_item_id',            # pocos nulos pero en primera iteración no se usa
+        'tags',                      # A priori no contiene informacion "relevante"
+        'site_id',                   # todas las filas tienen el mismo valor
         'seller_address_country_id', # colineal con seller_address_country_name
-        'available_quantity', # colineal con initial_quantity
+        'available_quantity',        # colineal con initial_quantity
+        'base_price',                # colineal con price
     ]
     df.drop(columns=drop_cols, inplace=True, errors='ignore')
  
@@ -79,7 +79,8 @@ def preprocess(data) -> pd.DataFrame:
     df['has_warranty'] = df['warranty'].notna().astype(int)
     df['is_free_shipping'] = df['shipping_free_shipping'].astype(int)
     df['is_active'] = (df['status'] == 'active').astype(int)
-    df.drop(columns=['warranty', 'shipping_free_shipping', 'status'], inplace=True)
+    df['has_original_price'] = df['original_price'].notna().astype(int)
+    df.drop(columns=['warranty', 'shipping_free_shipping', 'status', 'original_price'], inplace=True)
 
     # Encodeo columnas categoricas
     le = LabelEncoder()
@@ -93,7 +94,7 @@ def preprocess(data) -> pd.DataFrame:
 
     if 'condition' in df.columns:
         df['condition_enc'] = df['condition'].map({'new': 1, 'used': 0}) # para asegurar que el encodeo es correcto
-        
+
     print(f"Columnas  codificadas como 'Nombre_Columna_enc'.")
 
     # Encodear booleanos

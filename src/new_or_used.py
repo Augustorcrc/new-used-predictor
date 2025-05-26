@@ -24,7 +24,7 @@ The deliverables are:
 """
 
 import json
-from sklearn.preprocessing import MinMaxScaler
+from utils import scale_data, filtrar_y_seleccionar_features
 from preprocessing import preprocess
 from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
@@ -46,6 +46,7 @@ def build_dataset():
         del x["condition"]
     return X_train, y_train, X_test, y_test
 
+
 def funcion_principal(X_train, y_train, X_test, y_test):
     """
     Esta función es la principal del script. Se encarga de cargar el dataset, 
@@ -56,52 +57,35 @@ def funcion_principal(X_train, y_train, X_test, y_test):
     X_train_pp = preprocess(X_train)
     X_test_pp = preprocess(X_test)
 
-    # convertir target a binario
-    y_train = list(map({'new': 1, 'used': 0}.get, y_train))
-    y_test = list(map({'new': 1, 'used': 0}.get, y_test))
+    cols_a_utilizar = ['start_time',
+    'non_mp_methods_count',
+    'is_active',
+    'currency_id_enc',
+    'has_warranty',
+    'shipping_mode_enc',
+    'listing_type_id_enc',
+    'price',
+    'buying_mode_enc',
+    'automatic_relist_enc',
+    'has_original_price',
+    'pictures_count',
+    'seller_address_state_name_enc',
+    'sold_quantity',
+    'stop_time',
+    'seller_id',
+    'has_nuevo_in_title',
+    'initial_quantity']
 
-    # corroboro no haya nulos en los data frames
-    logger.info('Hay nulos en X_test? ', X_test_pp.isna().sum().any())
-    logger.info('Hay nulos en X_train? ', X_train_pp.isna().sum().any())
+    X_train_top, X_test_top, y_train, y_test, top_features = filtrar_y_seleccionar_features(X_train_pp, X_test_pp, y_train, y_test, logger=logger, select_cols=cols_a_utilizar)
 
-    # Selecciono columnas numericas
-    numeric_cols = X_train_pp.select_dtypes(include=['int64', 'float64']).columns
-    numeric_cols_test = X_test_pp.select_dtypes(include=['int64', 'float64']).columns
-    X_train_numeric = X_train_pp[numeric_cols]
-    X_test_numeric = X_test_pp[numeric_cols_test]
-
-
-    df_matriz = X_train_pp[numeric_cols].copy()
-    correlations = df_matriz.corr()['condition_enc'].drop('condition_enc') 
-    top_corr = correlations.reindex(correlations.abs().sort_values(ascending=False).index)
-
-    logger.info('Top de correlaciones con el target:')
-    logger.info(top_corr.head(10).round(2))
-
-
-    # Crear nuevo DataFrame solo con columnas con cierto umbral de correlación
-    mask = top_corr != 0  
-    top_features = top_corr[mask].index.tolist()
-    X_train_top = X_train_numeric[top_features]
-    X_test_top = X_test_numeric[top_features]
-
-    # verifico que efectivamnete no este target ni en train ni test
-    logger.info('Hay columna condition en X_train?', 'condition_enc' in X_train_top.columns)
-    logger.info('Hay columna condition en X_test?', 'condition_enc' in X_test_top.columns)
-
-    logger.info('Columnas utilizadas para entrenar:')
-    logger.info(X_train_top.columns)
 
     ## Escaleo los datos
-
-    scaler = MinMaxScaler()
-    X_train_top = scaler.fit_transform(X_train_top)
-    X_test_top = scaler.transform(X_test_top)
+    X_train_top, X_test_top = scale_data(X_train_top, X_test_top)
 
 
     # Entrenar el modelo con hiperparámetros óptimos
     model = XGBClassifier(
-            n_estimators=800,
+            n_estimators=900,
             max_depth=12,
             learning_rate=0.05,
             subsample=0.85,
@@ -126,15 +110,15 @@ def funcion_principal(X_train, y_train, X_test, y_test):
     recall = recall_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred)
 
-    logger.info("\n📊 Resultados del modelo:")
-    logger.info(f"Accuracy:  {accuracy:.4f}")
-    logger.info(f"Precision: {precision:.4f}")
-    logger.info(f"Recall:    {recall:.4f}")
-    logger.info(f"F1 Score:  {f1:.4f}")
+    logger.info("\n Resultados del modelo:")
+    logger.info(f"Accuracy:  {accuracy:.2f}")
+    logger.info(f"Precision: {precision:.2f}")
+    logger.info(f"Recall:    {recall:.2f}")
+    logger.info(f"F1 Score:  {f1:.2f}")
 
 
 
-    # Guardar metricas y exportar
+    ############## Guardar metricas y exportar
     metrics = {
         "accuracy": accuracy,
         "precision": precision,
@@ -145,7 +129,7 @@ def funcion_principal(X_train, y_train, X_test, y_test):
     metrics_df = pd.DataFrame([metrics])
     metrics_df.to_csv("../output/metricas_modelo.csv", index=False)
 
-    logger.info("✅ Archivo 'metricas_modelo.csv' guardado.")
+    logger.info(" Archivo 'metricas_modelo.csv' guardado.")
     
 
     # Guardar dataset de test con predicciones
@@ -162,7 +146,8 @@ def funcion_principal(X_train, y_train, X_test, y_test):
         for item in X_test:
             f.write(json.dumps(item) + "\n")
 
-    logger.info("✅ Archivo 'X_test_with_predictions.jsonlines' guardado.")
+    logger.info(" Archivo 'X_test_with_predictions.jsonlines' guardado.")
+
 
 
 # Configurar logger

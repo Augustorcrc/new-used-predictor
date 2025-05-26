@@ -5,7 +5,7 @@ Este proyecto construye un modelo de machine learning para predecir si una publi
 
 ---
 
-## 📦 Estructura del proyecto
+##  Estructura del proyecto
 
 ```
 project-root/
@@ -28,7 +28,7 @@ project-root/
 
 ---
 
-## ⚙️ Cómo correr el proyecto
+##  Cómo correr el proyecto
 
 ### 1. Instalar dependencias
 
@@ -47,9 +47,28 @@ Esto entrenará el modelo, evaluará su rendimiento y generará dos archivos en 
 - `metricas_modelo.csv`
 - `X_test_with_predictions.jsonlines`
 
+
 ---
 
-## 📈 Resultados del modelo
+##  Decisiones de diseño
+
+- **Target**: Se codificó como `1 = new`, `0 = used`.
+- **Preprocesamiento**: Se eliminan columnas con más del 80% de valores nulos, con mayoria de valores string vacios o listas vacias, irrelevantes y colineales.
+
+Se extraen features como:
+  - `pictures_count`, `non_mp_methods_count`, `title_word_count`, `has_nuevo_in_title`.
+
+Se codifican binarias utiles como:
+  - `is_free_shipping`, `is_active`, `has_warranty` y `has_original_price`.
+- **Encoding**: Se codifican columnas categóricas de baja cardinalidad con `LabelEncoder`. Las booleanas se convierten a `int`.
+- **Selección de variables**: Se seleccionan las features numéricas más correlacionadas con el target (`condition_enc`).
+- **Escalado**: `MinMaxScaler` aplicado sólo a las features seleccionadas.
+- **Modelo**: Se usó `XGBoostClassifier` con hiperparámetros ajustados vía `RandomizedSearchCV`.
+- **Exportación**: El conjunto `X_test` se guarda con columnas `predicted_condition` y `real_condition` en formato `.jsonlines`.
+
+---
+
+##  Resultados del modelo
 
 | Métrica      | Valor alcanzado |
 |--------------|------------------|
@@ -60,7 +79,7 @@ Esto entrenará el modelo, evaluará su rendimiento y generará dos archivos en 
 
 > Todas las métricas se pueden consultar en `output/metricas_modelo.csv`.
 
-### 🎯 Métricas utilizadas
+###  Métricas utilizadas
 
 - **Métrica principal: Accuracy**  
   En problemas de clasificación balanceados, la **accuracy** es una métrica adecuada ya que representa la proporción de predicciones correctas del modelo. Fue requerida explícitamente en la consigna y es fácilmente interpretable.
@@ -72,24 +91,7 @@ Esto entrenará el modelo, evaluará su rendimiento y generará dos archivos en 
 
 ---
 
-## 🧠 Decisiones de diseño
-
-- **Target**: Se codificó como `1 = new`, `0 = used`.
-- **Preprocesamiento**: Se eliminan columnas con más del 80% de valores nulos, mayoria de valores como string o listas vacias, irrelevantes y colineales.
-Se extraen features como:
-  - `pictures_count`, `non_mp_methods_count`, `title_word_count`, `has_nuevo_in_title`.
-Se codifican binarias utiles como:
-  - `is_free_shipping`, `is_active`, `has_warranty` y `has_original_price`.
-- **Encoding**: Se codifican columnas categóricas de baja cardinalidad con `LabelEncoder`. Las booleanas se convierten a `int`.
-- **Selección de variables**: Se seleccionan las features numéricas más correlacionadas con el target (`condition_enc`).
-- **Escalado**: `MinMaxScaler` aplicado sólo a las features seleccionadas.
-- **Modelo**: Se usó `XGBoostClassifier` con hiperparámetros ajustados vía `RandomizedSearchCV`.
-- **Logging**: Se utiliza `logging` para trazabilidad del pipeline.
-- **Exportación**: El conjunto `X_test` se guarda con columnas `predicted_condition` y `real_condition` en `.jsonlines`.
-
----
-
-## 🧪 Hiperparámetros del modelo final
+##  Hiperparámetros del modelo final
 
 ```python
 XGBClassifier(
@@ -109,7 +111,7 @@ XGBClassifier(
 
 ---
 
-## 🗂️ Dependencias clave
+##  Dependencias clave
 
 - `pandas`, `scikit-learn`, `xgboost`
 - `matplotlib`, `seaborn` (EDA opcional)
@@ -118,7 +120,7 @@ XGBClassifier(
 
 ---
 
-## 📚 Análisis Exploratorio
+##  Análisis Exploratorio (ejecucion opcional)
 
 El archivo `eda.ipynb` explora:
 - Distribución de clases
@@ -131,5 +133,11 @@ El archivo `eda.ipynb` explora:
 
 
 ---
+
+## Próximos pasos
+
+- Incorporar NLP o LLM sobre título y descripción para generar nuevas features.
+- Profundizar análisis de columnas no tenidas en cuenta en esta primera instancia.
+
 
 
