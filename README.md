@@ -56,11 +56,19 @@ Esto entrenará el modelo, evaluará su rendimiento y generará dos archivos en 
 - **Preprocesamiento**: Se eliminan columnas con más del 80% de valores nulos, con mayoria de valores string vacios o listas vacias, irrelevantes y colineales.
 
 Se extraen features como:
-  - `pictures_count`, `non_mp_methods_count`, `title_word_count`, `has_nuevo_in_title`.
+  - `pictures_count`: cantidad de imágenes en la publicación. 
+  - `non_mp_methods_count`: cantidad de métodos de pago no Mercado Pago. 
+  - `title_word_count`: cantidad de palabras en el título.
+  - `has_nuevo_in_title`: indicador binario si el título contiene la palabra "nuevo". 
 
 Se codifican binarias utiles como:
-  - `is_free_shipping`, `is_active`, `has_warranty` y `has_original_price`.
-- **Encoding**: Se codifican columnas categóricas de baja cardinalidad con `LabelEncoder`. Las booleanas se convierten a `int`.
+  - `is_free_shipping`: si el producto tiene envío gratis.
+  - `is_active`: Indica si la publicacion esta activa
+  - `has_warranty`: si el producto declara garantía o no.
+  - `has_original_price`: indica si se informó un precio original (pocos no nulos, pero relevante).
+
+
+- **Encoding**: Se codifican columnas categóricas de baja cardinalidad con `LabelEncoder`, estas se identifican con el sufijo `_enc`. Las booleanas se convierten a `int`.
 - **Selección de variables**: Se seleccionan las features numéricas más correlacionadas con el target (`condition_enc`).
 - **Escalado**: `MinMaxScaler` aplicado sólo a las features seleccionadas.
 - **Modelo**: Se usó `XGBoostClassifier` con hiperparámetros ajustados vía `RandomizedSearchCV`.
@@ -82,9 +90,11 @@ Se codifican binarias utiles como:
 ###  Métricas utilizadas
 
 - **Métrica principal: Accuracy**  
+
   En problemas de clasificación balanceados, la **accuracy** es una métrica adecuada ya que representa la proporción de predicciones correctas del modelo. Fue requerida explícitamente en la consigna y es fácilmente interpretable.
 
 - **Métrica secundaria: Precision**  
+
   Se seleccionó la **precisión** como métrica secundaria porque nos indica **qué tan confiable es el modelo cuando predice que un producto es nuevo**.  
   En este contexto, **minimizar falsos positivos** es crítico: no queremos que el modelo prediga "nuevo" cuando en realidad el producto es usado, ya que eso podría generar una **mala experiencia para el cliente** y tener implicancias comerciales serias.  
   Por esta razón, se privilegia la precisión por sobre el recall como segunda métrica clave.
@@ -108,6 +118,26 @@ XGBClassifier(
     random_state=42
 )
 ```
+Se utilizan las siguientes columnas:
+
+- start_time
+- non_mp_methods_count
+- is_active
+- currency_id_enc
+- has_warranty
+- shipping_mode_enc
+- listing_type_id_enc
+- price
+- buying_mode_enc
+- automatic_relist_enc
+- has_original_price
+- pictures_count
+- seller_address_state_name_enc
+- sold_quantity
+- stop_time
+- seller_id
+- has_nuevo_in_title
+- initial_quantity
 
 ---
 
