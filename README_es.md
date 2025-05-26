@@ -85,10 +85,10 @@ Se codifican binarias utiles como:
 
 | Métrica      | Valor alcanzado |
 |--------------|------------------|
-| Accuracy     | ≥ 0.88           |
-| Precision    | ✓ Calculada      |
-| Recall       | ✓ Calculada      |
-| F1 Score     | ✓ Calculada      |
+| Accuracy     | 0.89            |
+| Precision    | 0.91            |
+| Recall       | 0.89            |
+| F1 Score     | 0.90            |
 
 > Todas las métricas se pueden consultar en `output/metricas_modelo.csv`.
 

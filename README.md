@@ -83,10 +83,10 @@ This will train the model, evaluate its performance, and generate the following 
 
 | Metric     | Value          |
 |------------|----------------|
-| Accuracy   | ≥ 0.88         |
-| Precision  | ✓ Calculated   |
-| Recall     | ✓ Calculated   |
-| F1 Score   | ✓ Calculated   |
+| Accuracy   | 0.89           |
+| Precision  | 0.91           |
+| Recall     | 0.89           |
+| F1 Score   | 0.90           |
 
 > All metrics can be found in `output/metricas_modelo.csv`.
 
